@@ -1,0 +1,53 @@
+<div class="card bg-light">
+  <div class="card-body">
+    <h5 class="card-title">Total</h5>
+    <h6 class="card-subtitle mb-2 text-muted">Trámites y servicios</h6>
+    <h1 class='card-text text-center display-2'><strong>100</strong></h1>
+  </div>
+</div>
+
+<div class="card-deck my-1">
+  <div name='card' class="card bg-light my-1">
+    <div class="card-header">
+      <h5>
+        Trámites en línea <span class="badge badge-success ml-2" style='font-size: 1em;'>100</span>
+        <i class="fa fa-window-maximize mx-1 float-right" style='cursor: pointer;' aria-hidden="true" data-maximize=true (click)="maximizeCard($event)"></i>
+        <i class="fa fa-tag mx-1 float-right" style='cursor: pointer;' aria-hidden="true" (click)="pieChartLegend=!pieChartLegend"></i>
+      </h5>
+    </div>
+    <div class="card-body">
+      <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
+        [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+      </canvas>
+    </div>
+  </div>
+  <div name='card' class="card bg-light my-1">
+    <div class="card-header">
+      <h5>
+        Trámites en línea <span class="badge badge-success ml-2" style='font-size: 1em;'>100</span>
+        <i class="fa fa-window-maximize mx-1 float-right" style='cursor: pointer;' aria-hidden="true" data-maximize=true (click)="maximizeCard($event)"></i>
+        <i class="fa fa-tag mx-1 float-right" style='cursor: pointer;' aria-hidden="true" (click)="pieChartLegend=!pieChartLegend"></i>
+      </h5>
+    </div>
+    <div class="card-body">
+      <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
+        [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+      </canvas>
+    </div>
+  </div>
+  <div name='card' class="card bg-light my-1">
+    <div class="card-header">
+      <h5>
+        Trámites en línea <span class="badge badge-success ml-2" style='font-size: 1em;'>100</span>
+        <i class="fa fa-window-maximize mx-1 float-right" style='cursor: pointer;' aria-hidden="true" data-maximize=true (click)="maximizeCard($event)"></i>
+        <i class="fa fa-tag mx-1 float-right" style='cursor: pointer;' aria-hidden="true" (click)="pieChartLegend=!pieChartLegend"></i>
+      </h5>
+    </div>
+    <div class="card-body">
+      <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
+        [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="pieChartLegend">
+      </canvas>
+    </div>
+  </div>
+
+</div>
