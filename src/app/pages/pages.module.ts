@@ -1,15 +1,17 @@
-import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { NgModule, LOCALE_ID } from '@angular/core';
+import { CommonModule, registerLocaleData } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ChartsModule } from 'ng2-charts';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
 
-// BOOTSTRAP
-
+// LOCALES
+import localeEsMX from '@angular/common/locales/es-MX';
 
 // COMPONENTS
 import { PrincipalComponent } from './principal/principal.component';
+
+registerLocaleData(localeEsMX, 'es-MX');
 
 @NgModule({
   declarations: [
@@ -24,6 +26,9 @@ import { PrincipalComponent } from './principal/principal.component';
     FormsModule,
     NgbModule,
     ChartsModule,
+  ], 
+  providers: [
+    { provide: LOCALE_ID, useValue: 'es-MX' }
   ]
 })
 export class PagesModule { }

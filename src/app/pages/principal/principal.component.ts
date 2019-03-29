@@ -1,37 +1,31 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, HostListener } from '@angular/core';
 import { ChartType, ChartOptions, ChartDataSets } from 'chart.js';
 import { SingleDataSet, Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 // INTERFACES
 import { searchResultInterface } from 'src/app/interfaces/searchResult.interface';
+import { pieCharInterface, pieChartsActoInterface } from 'src/app/interfaces/charts.interface';
+import { WorldclockapiService, ChartsService } from 'src/app/services/service.index';
 
 declare const $: any;
+
+declare interface pieChartsActosInterface {
+  acto: string;
+  cantidad?: number;
+  graph: pieCharInterface;
+}
 
 @Component({
   selector: 'app-principal',
   templateUrl: './principal.component.html',
   styleUrls: ['./principal.component.scss']
 })
-export class PrincipalComponent implements OnInit {
+export class PrincipalComponent implements OnInit {   
 
-  // Pie
-  public pieChartOptions: ChartOptions = {
-    responsive: true,
-    plugins: {
-      datalabels: {
-        formatter: (value, ctx) => {
-          const label = ctx.chart.data.labels[ctx.dataIndex];
-          return label;
-        },
-      },
-    }
-  };
-  public pieChartLabels: Label[] = ['Trámite 1', 'Tramite 2', 'Trámite 3'];
-  public pieChartData: SingleDataSet = [300, 500, 100];
-  public pieChartType: ChartType = 'pie';
-  public pieChartLegend = false;
-  public pieChartPlugins = [pluginDataLabels];
+  public fechaActual: string = null;
+  public totalTramitesRealizados: number = 0;
+  public chartsActos: pieChartsActoInterface[] = [];
 
   public barChartOptions: ChartOptions = {
     responsive: true
@@ -44,19 +38,57 @@ export class PrincipalComponent implements OnInit {
   public barChartData: ChartDataSets[] = [
     { data: [65, 59, 80, 81], label: 'Origen de solicitudes' },
   ];
-  
+
   public barChartColors: any[] = [
     { backgroundColor: [] },
     { borderColor: [] }
   ];
-  
-  public searchResult : searchResultInterface = null;
+
+  public searchResult: searchResultInterface = null;
 
 
-  constructor() { }
+  constructor(
+    private wsWorldclockapiService: WorldclockapiService,
+    private chartService: ChartsService
+  ) { 
+
+    this.wsWorldclockapiService.obtenerFechaUniverzal()
+      .then( (response: string) => {
+        this.fechaActual = response;
+      })
+      .catch( (err) => {});
+
+  }
 
   ngOnInit() {
     
+    // simulación de respuesta de graficos de pastel tramites y servicios
+    
+    for (let i = 1; i <= 3; i++) {
+
+      let randomTramites = Math.trunc((Math.random() * 15) + 1);
+      let labels = [];
+      let data= [];
+      let total= 0;
+      for (let idx = 1; idx <= randomTramites; idx++) {
+        labels.push(`Trámite ${idx}`);
+
+        const cantidad = Math.trunc((Math.random() * 15) + 1);
+        data.push( cantidad );
+        total += cantidad;
+      }
+
+      this.totalTramitesRealizados += total;  
+      let pieChar = this.chartService.makePieChar(data,labels,total);
+      this.chartsActos.push(this.chartService.makeChartActo(i === 1 ? 'En línea' : i === 2 ? 'Kioscos' : 'Ventanilla',pieChar));
+    }
+
+
+
+    
+
+
+
     // simulación de respuesta de busqueda general
     this.searchResult = {
       general : {
@@ -70,42 +102,35 @@ export class PrincipalComponent implements OnInit {
         { id : 4, nombre : 'Trámite 4' },
         { id : 5, nombre : 'Trámite 5' }
       ]
-    }
+    };
 
   }
 
-  ngAfterViewInit(){
-    //$('.collapse').collapse();
-  }
+  // ngAfterViewInit(){}
 
   // events
-  public maximizeCard(event) {
-    let target = $(event.target);
-    let _closest = target.closest('div[name=card]');
-
+  public maximizeCard(event, card) {
+    let target = $(card);
+    let _event = $(event.currentTarget);
 
     if (target.data('maximize') === true) {
 
-      _closest.css('min-width', '97%');
-      target.addClass('fa-window-minimize').removeClass('fa-window-maximize');
+      target.removeClass('col-12 col-md-12 col-lg-4').addClass('col-12');
+      _event.addClass('fa-window-minimize');
       target.data('maximize', false);
 
     } else {
 
-      _closest.css('min-width', '0');
-      target.addClass('fa-window-maximize').removeClass('fa-window-minimize');
+      target.removeClass('col-12').addClass('col-12 col-md-12 col-lg-4');
+      _event.addClass('fa-window-maximize').removeClass('fa-window-minimize');
       target.data('maximize', true);
 
     }
 
   }
 
-  public chartClicked({ event, active }: { event: MouseEvent, active: {}[] }): void {
-    console.log(event, active);
-  }
-
-  public chartHovered({ event, active }: { event: MouseEvent, active: {}[] }): void {
-    console.log(event, active);
-  }
+  public chartClicked( event, item ): void {
+    console.log(event,item);
+  }  
 
 }
