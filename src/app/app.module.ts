@@ -3,9 +3,6 @@ import { NgModule } from '@angular/core';
 
 import { AppRoutingModule } from './app-routing.module';
 
-// BOOTSTRAP
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-
 // MODULES
 import { SharedModule } from './shared/shared.module';
 
@@ -20,7 +17,6 @@ import { PagesModule } from './pages/pages.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgbModule.forRoot(),
     SharedModule,
     PagesModule
   ],

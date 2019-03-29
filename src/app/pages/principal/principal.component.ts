@@ -1,8 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { ChartType, ChartOptions } from 'chart.js';
+import { ChartType, ChartOptions, ChartDataSets } from 'chart.js';
 import { SingleDataSet, Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
-import * as $ from 'jquery';
+
+// INTERFACES
+import { searchResultInterface } from 'src/app/interfaces/searchResult.interface';
+
+declare const $: any;
 
 @Component({
   selector: 'app-principal',
@@ -29,9 +33,49 @@ export class PrincipalComponent implements OnInit {
   public pieChartLegend = false;
   public pieChartPlugins = [pluginDataLabels];
 
+  public barChartOptions: ChartOptions = {
+    responsive: true
+  };
+  public barChartLabels: Label[] = ['Colima', 'Villa de Álvarez', 'Manzanillo', 'Comala'];
+  public barChartType: ChartType = 'bar';
+  public barChartLegend = false;
+  public barChartPlugins = [pluginDataLabels];
+
+  public barChartData: ChartDataSets[] = [
+    { data: [65, 59, 80, 81], label: 'Origen de solicitudes' },
+  ];
+  
+  public barChartColors: any[] = [
+    { backgroundColor: [] },
+    { borderColor: [] }
+  ];
+  
+  public searchResult : searchResultInterface = null;
+
+
   constructor() { }
 
   ngOnInit() {
+    
+    // simulación de respuesta de busqueda general
+    this.searchResult = {
+      general : {
+        palabra : 'acta'
+      },
+      registrosEncontrados : 5,
+      listaTramites : [
+        { id : 1, nombre : 'Trámite 1', realizados : { total : 10, linea : 5, ventanilla : 1, kiosco : 4 } },
+        { id : 2, nombre : 'Trámite 2', realizados : { total : 20, linea : 5, ventanilla : 5, kiosco : 10 } },
+        { id : 3, nombre : 'Trámite 3', realizados : { total : 5, linea : 3, ventanilla : 0, kiosco : 2 } },
+        { id : 4, nombre : 'Trámite 4' },
+        { id : 5, nombre : 'Trámite 5' }
+      ]
+    }
+
+  }
+
+  ngAfterViewInit(){
+    //$('.collapse').collapse();
   }
 
   // events
@@ -48,7 +92,7 @@ export class PrincipalComponent implements OnInit {
 
     } else {
 
-      _closest.css('min-width', null);
+      _closest.css('min-width', '0');
       target.addClass('fa-window-maximize').removeClass('fa-window-minimize');
       target.data('maximize', true);
 
