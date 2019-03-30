@@ -154,9 +154,14 @@
       </ng-template>
       <ng-template ngbPanelContent>
         <!-- ACORDION CONTENT -->
-        <!-- <canvas baseChart [data]="pieChartData" [labels]="pieChartLabels" [chartType]="pieChartType"
-          [options]="pieChartOptions" [plugins]="pieChartPlugins" [legend]="true">
-        </canvas> -->
+        <canvas baseChart 
+          [data]="item.graph.data" 
+          [labels]="item.graph.labels" 
+          [chartType]="'pie'" 
+          [options]="item.graph.options"
+          [plugins]="item.graph.plugins" 
+          [legend]="item.graph.legend">
+        </canvas>        
         <!-- /ACORDION CONTENT -->
       </ng-template>
     </ngb-panel>      

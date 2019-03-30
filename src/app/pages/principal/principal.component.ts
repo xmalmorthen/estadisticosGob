@@ -96,9 +96,9 @@ export class PrincipalComponent implements OnInit {
       },
       registrosEncontrados : 5,
       listaTramites : [
-        { id : 1, nombre : 'Trámite 1', realizados : { total : 10, linea : 5, ventanilla : 1, kiosco : 4 } },
-        { id : 2, nombre : 'Trámite 2', realizados : { total : 20, linea : 5, ventanilla : 5, kiosco : 10 } },
-        { id : 3, nombre : 'Trámite 3', realizados : { total : 5, linea : 3, ventanilla : 0, kiosco : 2 } },
+        { id : 1, nombre : 'Trámite 1', realizados : { total : 10, linea : 5, ventanilla : 1, kiosco : 4 }, graph : this.chartService.makePieChar([5,1,4],['Línea','Kiosco','Ventanilla'],10) },
+        { id : 2, nombre : 'Trámite 2', realizados : { total : 20, linea : 5, ventanilla : 5, kiosco : 10 }, graph : this.chartService.makePieChar([5,5,10],['Línea','Kiosco','Ventanilla'],20) },
+        { id : 3, nombre : 'Trámite 3', realizados : { total : 5, linea : 3, ventanilla : 0, kiosco : 2 }, graph : this.chartService.makePieChar([3,2],['Línea','Ventanilla'],5) },
         { id : 4, nombre : 'Trámite 4' },
         { id : 5, nombre : 'Trámite 5' }
       ]
