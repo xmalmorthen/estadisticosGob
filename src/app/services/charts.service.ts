@@ -3,7 +3,8 @@ import { SingleDataSet, Label } from 'ng2-charts';
 import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 // INTERFACES
-import { pieCharInterface, pieChartsActoInterface } from '../interfaces/charts.interface';
+import { pieCharInterface, pieChartsActoInterface, pieBarInterface } from '../interfaces/charts.interface';
+import { ChartDataSets } from 'chart.js';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +23,17 @@ export class ChartsService {
       labels: labels
     };
   }
+
+  makeBarChar (data: ChartDataSets[], labels: Label[] ): pieBarInterface {
+    return {
+      options: {responsive: true},    
+      legend: false,
+      plugins: [pluginDataLabels],
+      data: data,
+      labels: labels
+    };
+  }
+
 
   //cambiar tipado string de parámetro chart por los diferentes tipos de interfaces de graficos
   makeChartActo ( acto: string, chart: pieCharInterface ): pieChartsActoInterface {

@@ -5,7 +5,7 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 
 // INTERFACES
 import { searchResultInterface } from 'src/app/interfaces/searchResult.interface';
-import { pieCharInterface, pieChartsActoInterface } from 'src/app/interfaces/charts.interface';
+import { pieCharInterface, pieChartsActoInterface, pieBarInterface } from 'src/app/interfaces/charts.interface';
 import { WorldclockapiService, ChartsService } from 'src/app/services/service.index';
 
 declare const $: any;
@@ -23,29 +23,15 @@ declare interface pieChartsActosInterface {
 })
 export class PrincipalComponent implements OnInit {   
 
-  public fechaActual: string = null;
-  public totalTramitesRealizados: number = 0;
-  public chartsActos: pieChartsActoInterface[] = [];
+  public isCollapsedSearchSeccion: boolean = true;
 
-  public barChartOptions: ChartOptions = {
-    responsive: true
-  };
-  public barChartLabels: Label[] = ['Colima', 'Villa de Álvarez', 'Manzanillo', 'Comala'];
-  public barChartType: ChartType = 'bar';
-  public barChartLegend = false;
-  public barChartPlugins = [pluginDataLabels];
+  public fechaActual: string = null; // fecha actual obtenida de la web
+  public totalTramitesRealizados: number = 0; // label que muestra total de tramites realizados
+  public chartsActos: pieChartsActoInterface[] = []; // objeto que contiene la información que se muestra de los tipos de tramites con sus gráficos
+  public barCharOrigenSolicitudes: pieBarInterface = null; // objeto que contiene la información del gráfico de barras
+  public searchResult: searchResultInterface = null; // objeto que contiene la información que se muestra como resultado de la busqueda general
 
-  public barChartData: ChartDataSets[] = [
-    { data: [65, 59, 80, 81], label: 'Origen de solicitudes' },
-  ];
-
-  public barChartColors: any[] = [
-    { backgroundColor: [] },
-    { borderColor: [] }
-  ];
-
-  public searchResult: searchResultInterface = null;
-
+  public maximizedObject: any = null;
 
   constructor(
     private wsWorldclockapiService: WorldclockapiService,
@@ -62,8 +48,7 @@ export class PrincipalComponent implements OnInit {
 
   ngOnInit() {
     
-    // simulación de respuesta de graficos de pastel tramites y servicios
-    
+    // simulación de respuesta de graficos de pastel tramites y servicios   
     for (let i = 1; i <= 3; i++) {
 
       let randomTramites = Math.trunc((Math.random() * 15) + 1);
@@ -83,10 +68,10 @@ export class PrincipalComponent implements OnInit {
       this.chartsActos.push(this.chartService.makeChartActo(i === 1 ? 'En línea' : i === 2 ? 'Kioscos' : 'Ventanilla',pieChar));
     }
 
-
-
-    
-
+    // simulación de respuesta de grafico de barras
+    const data = [{ data: [65, 59, 80, 81]}];
+    const labels = ['Colima', 'Villa de Álvarez', 'Manzanillo', 'Comala'];
+    this.barCharOrigenSolicitudes = this.chartService.makeBarChar(data,labels);
 
 
     // simulación de respuesta de busqueda general

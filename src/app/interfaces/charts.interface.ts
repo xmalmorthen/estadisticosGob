@@ -10,6 +10,14 @@ export interface pieCharInterface {
   legend: boolean;
 }
 
+export interface pieBarInterface {
+  data?: SingleDataSet;
+  labels?: Label[];
+  options: ChartOptions;
+  plugins: any;
+  legend: boolean;
+}
+
 export interface pieChartsActoInterface {
   acto: string;
   graph: pieCharInterface;
