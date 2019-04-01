@@ -1,0 +1,5 @@
+{
+    "require": {
+        "maltyxx/restclient": "^4.0"
+    }
+}

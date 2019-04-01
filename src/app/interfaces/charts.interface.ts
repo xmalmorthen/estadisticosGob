@@ -1,5 +1,5 @@
 import { SingleDataSet, Label } from "ng2-charts";
-import { ChartOptions } from "chart.js";
+import { ChartOptions, ChartDataSets } from "chart.js";
 
 export interface pieCharInterface {
   total?: number;
@@ -11,7 +11,7 @@ export interface pieCharInterface {
 }
 
 export interface pieBarInterface {
-  data?: SingleDataSet;
+  data?: ChartDataSets[];
   labels?: Label[];
   options: ChartOptions;
   plugins: any;
