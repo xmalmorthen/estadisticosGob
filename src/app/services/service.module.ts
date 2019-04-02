@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 
-import { WorldclockapiService, ChartsService } from './service.index';
+import { WorldclockapiService, ChartsService, WsAPIEstadisticosGobService } from './service.index';
 
 @NgModule({
   declarations: [],
@@ -11,7 +11,8 @@ import { WorldclockapiService, ChartsService } from './service.index';
     HttpClientModule
   ], providers :[
     WorldclockapiService,
-    ChartsService
+    ChartsService,
+    WsAPIEstadisticosGobService
   ]
 })
 export class ServiceModule { }

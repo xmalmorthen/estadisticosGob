@@ -6,7 +6,8 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 // INTERFACES
 import { searchResultInterface } from 'src/app/interfaces/searchResult.interface';
 import { pieCharInterface, pieChartsActoInterface, pieBarInterface } from 'src/app/interfaces/charts.interface';
-import { WorldclockapiService, ChartsService } from 'src/app/services/service.index';
+import { WorldclockapiService, ChartsService, WsAPIEstadisticosGobService } from 'src/app/services/service.index';
+import { wsAPIEstadiscitosGobListaDataInterface, wsAPIEstadiscitosGobListaRowInterface } from 'src/app/interfaces/wsAPIEstadiscitosGob.interface';
 
 declare const $: any;
 
@@ -35,7 +36,8 @@ export class PrincipalComponent implements OnInit {
 
   constructor(
     private wsWorldclockapiService: WorldclockapiService,
-    private chartService: ChartsService
+    private chartService: ChartsService,
+    private wsAPIEstadisticosGobService: WsAPIEstadisticosGobService
   ) { 
 
     this.wsWorldclockapiService.obtenerFechaUniverzal()
@@ -44,29 +46,51 @@ export class PrincipalComponent implements OnInit {
       })
       .catch( (err) => {});
 
+
+      this.wsAPIEstadisticosGobService.listaTramitesRegistradosLinea('01/01/2019','31/12/2019')
+      .then( (response: wsAPIEstadiscitosGobListaDataInterface) =>{
+
+          let labels = [];
+          let data= [];
+          response.rows.forEach( (item: wsAPIEstadiscitosGobListaRowInterface) => {
+            if (item.cantidad >= 4) {
+              
+              labels.push( item.nombreTramite );
+              data.push( item.cantidad );
+
+            }
+          });
+
+          let pieChar = this.chartService.makePieChar(data,labels,response.total);
+          this.chartsActos.push(this.chartService.makeChartActo('En línea',pieChar));
+
+      })
+      .catch( (err) => {
+      });
+
   }
 
   ngOnInit() {
     
     // simulación de respuesta de graficos de pastel tramites y servicios   
-    for (let i = 1; i <= 3; i++) {
+    // for (let i = 1; i <= 3; i++) {
 
-      let randomTramites = Math.trunc((Math.random() * 15) + 1);
-      let labels = [];
-      let data= [];
-      let total= 0;
-      for (let idx = 1; idx <= randomTramites; idx++) {
-        labels.push(`Trámite ${idx}`);
+    //   let randomTramites = Math.trunc((Math.random() * 15) + 1);
+    //   let labels = [];
+    //   let data= [];
+    //   let total= 0;
+    //   for (let idx = 1; idx <= randomTramites; idx++) {
+    //     labels.push(`Trámite ${idx}`);
 
-        const cantidad = Math.trunc((Math.random() * 15) + 1);
-        data.push( cantidad );
-        total += cantidad;
-      }
+    //     const cantidad = Math.trunc((Math.random() * 15) + 1);
+    //     data.push( cantidad );
+    //     total += cantidad;
+    //   }
 
-      this.totalTramitesRealizados += total;  
-      let pieChar = this.chartService.makePieChar(data,labels,total);
-      this.chartsActos.push(this.chartService.makeChartActo(i === 1 ? 'En línea' : i === 2 ? 'Kioscos' : 'Ventanilla',pieChar));
-    }
+    //   this.totalTramitesRealizados += total;  
+    //   let pieChar = this.chartService.makePieChar(data,labels,total);
+    //   this.chartsActos.push(this.chartService.makeChartActo(i === 1 ? 'En línea' : i === 2 ? 'Kioscos' : 'Ventanilla',pieChar));
+    // }
 
     // simulación de respuesta de grafico de barras
     const data = [{ data: [65, 59, 80, 81]}];

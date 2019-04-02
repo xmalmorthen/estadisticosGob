@@ -16,7 +16,31 @@ export class ChartsService {
   makePieChar (data: SingleDataSet, labels: Label[], total: number ): pieCharInterface {
     return {
       total: total,
-      options: {responsive: true,plugins: {datalabels: {formatter: (value, ctx) => {const label = ctx.chart.data.labels[ctx.dataIndex];return label;}}}},    
+      options: {
+        responsive: true,
+        plugins: {
+          datalabels: {
+            // formatter: (value, ctx) => {
+            //   const label =  ctx.chart.data.labels[ctx.dataIndex];
+            //   return label;
+            // }
+          }
+        },
+        tooltips:{
+          enabled: true,
+          callbacks: {
+            label: function(tooltipItem, data) {
+              console.log(tooltipItem, data);
+              //debugger;
+
+              const label = ' ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] + ' trámites'; //data.labels[tooltipItem.index];
+              return label.slice(0,40);
+
+            }
+          }
+        }
+      
+      },
       legend: false,
       plugins: [pluginDataLabels],
       data: data,
