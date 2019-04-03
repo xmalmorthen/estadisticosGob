@@ -12,6 +12,10 @@ const ws = 'http://localhost:666/wsAPIEstadisticosGob/api/v1/';
 })
 export class WsAPIEstadisticosGobService {
 
+  public ListaTramitesRegistradosLinea: wsAPIEstadiscitosGobListaDataInterface= null;
+  public ListaTramitesRegistradosKioscos: wsAPIEstadiscitosGobListaDataInterface= null;
+  public ListaTramitesRegistradosVentanilla: wsAPIEstadiscitosGobListaDataInterface= null;
+
   constructor(private http: HttpClient) { }
 
   // OBTENER TOTAL DE TRAMITES REGISTRADOS EN LINEA
@@ -99,6 +103,9 @@ export class WsAPIEstadisticosGobService {
   listaTramitesRegistradosLinea(fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
     return new Promise ( (resolve, reject) => {
 
+      if (this.ListaTramitesRegistradosLinea)
+        resolve(this.ListaTramitesRegistradosLinea);
+
       let wsRequest = ws + 'query/listaTramitesRegistradosLinea';
       if (fecha1) {
         wsRequest += '?fecha1=' + fecha1;
@@ -113,6 +120,9 @@ export class WsAPIEstadisticosGobService {
             })
           )
           .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+              
+              this.ListaTramitesRegistradosLinea = response;
+
               resolve( response );
             },
             (error: HttpErrorResponse) => {
@@ -125,6 +135,9 @@ export class WsAPIEstadisticosGobService {
   // OBTENER TOTAL DE TRAMITES REGISTRADOS EN KIOSCOS
   listaTramitesRegistradosKioscos(fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
     return new Promise ( (resolve, reject) => {
+
+      if (this.ListaTramitesRegistradosKioscos)
+        resolve(this.ListaTramitesRegistradosKioscos);
 
       let wsRequest = ws + 'query/listaTramitesRegistradosKioscos';
       if (fecha1) {
@@ -140,6 +153,9 @@ export class WsAPIEstadisticosGobService {
             })
           )
           .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+
+              this.ListaTramitesRegistradosKioscos = response;
+
               resolve( response );
             },
             (error: HttpErrorResponse) => {
@@ -152,6 +168,9 @@ export class WsAPIEstadisticosGobService {
   // OBTENER TOTAL DE TRAMITES REGISTRADOS EN KIOSCOS
   listaTramitesRegistradosVentanilla(fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
     return new Promise ( (resolve, reject) => {
+
+      if (this.ListaTramitesRegistradosVentanilla)
+        resolve(this.ListaTramitesRegistradosVentanilla);
 
       let wsRequest = ws + 'query/listaTramitesRegistradosVentanilla';
       if (fecha1) {
@@ -167,6 +186,9 @@ export class WsAPIEstadisticosGobService {
             })
           )
           .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+
+              this.ListaTramitesRegistradosVentanilla = response;
+
               resolve( response );
             },
             (error: HttpErrorResponse) => {

@@ -1,6 +1,9 @@
 import { SingleDataSet, Label } from "ng2-charts";
 import { ChartOptions, ChartDataSets } from "chart.js";
 
+// ENUMERATORS
+import { tramitesDetailRefEnum } from '../enumerators/tramitesDetailRef.enum';
+
 export interface pieCharInterface {
   total?: number;
   data?: SingleDataSet;
@@ -20,5 +23,7 @@ export interface pieBarInterface {
 
 export interface pieChartsActoInterface {
   acto: string;
+  detailRef: tramitesDetailRefEnum;
+  params?: {[k: string]: string;};
   graph: pieCharInterface;
 }

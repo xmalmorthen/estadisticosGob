@@ -6,6 +6,9 @@ import * as pluginDataLabels from 'chartjs-plugin-datalabels';
 import { pieCharInterface, pieChartsActoInterface, pieBarInterface } from '../interfaces/charts.interface';
 import { ChartDataSets } from 'chart.js';
 
+// ENUMERATORS
+import { tramitesDetailRefEnum } from '../enumerators/tramitesDetailRef.enum';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -16,6 +19,10 @@ export class ChartsService {
   makePieChar (data: SingleDataSet, labels: Label[], total: number ): pieCharInterface {
     return {
       total: total,
+      legend: false,
+      plugins: [pluginDataLabels],
+      data: data,
+      labels: labels,
       options: {
         responsive: true,
         plugins: {
@@ -30,21 +37,16 @@ export class ChartsService {
           enabled: true,
           callbacks: {
             label: function(tooltipItem, data) {
-              console.log(tooltipItem, data);
+              //console.log(tooltipItem, data);
               //debugger;
 
               const label = ' ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] + ' trámites'; //data.labels[tooltipItem.index];
-              return label.slice(0,40);
+              return label; //.slice(0,40);
 
             }
           }
-        }
-      
-      },
-      legend: false,
-      plugins: [pluginDataLabels],
-      data: data,
-      labels: labels
+        }      
+      }
     };
   }
 
@@ -60,9 +62,11 @@ export class ChartsService {
 
 
   //cambiar tipado string de parámetro chart por los diferentes tipos de interfaces de graficos
-  makeChartActo ( acto: string, chart: pieCharInterface ): pieChartsActoInterface {
+  makeChartActo ( acto: string, detailRef: tramitesDetailRefEnum, chart: pieCharInterface, params: {[k: string]: string;} ): pieChartsActoInterface {
     return {
-      acto : acto,
+      acto: acto,
+      detailRef: detailRef,
+      params: params,      
       graph: chart
     };
   }

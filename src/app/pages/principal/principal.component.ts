@@ -9,6 +9,10 @@ import { pieCharInterface, pieChartsActoInterface, pieBarInterface } from 'src/a
 import { WorldclockapiService, ChartsService, WsAPIEstadisticosGobService } from 'src/app/services/service.index';
 import { wsAPIEstadiscitosGobListaDataInterface, wsAPIEstadiscitosGobListaRowInterface } from 'src/app/interfaces/wsAPIEstadiscitosGob.interface';
 
+// ENUMERATORS
+import { tramitesDetailRefEnum } from 'src/app/enumerators/tramitesDetailRef.enum';
+import { ActivatedRoute, Router } from '@angular/router';
+
 declare const $: any;
 
 declare interface pieChartsActosInterface {
@@ -32,13 +36,19 @@ export class PrincipalComponent implements OnInit {
   public barCharOrigenSolicitudes: pieBarInterface = null; // objeto que contiene la información del gráfico de barras
   public searchResult: searchResultInterface = null; // objeto que contiene la información que se muestra como resultado de la busqueda general
 
-  public maximizedObject: any = null;
-
   constructor(
+    private activatedRoute: ActivatedRoute,
+    private router: Router,
     private wsWorldclockapiService: WorldclockapiService,
     private chartService: ChartsService,
     private wsAPIEstadisticosGobService: WsAPIEstadisticosGobService
   ) { 
+
+    this.activatedRoute.queryParams.subscribe( (params) => {
+
+      console.log(params);
+      
+    });
 
     this.wsWorldclockapiService.obtenerFechaUniverzal()
       .then( (response: string) => {
@@ -46,52 +56,82 @@ export class PrincipalComponent implements OnInit {
       })
       .catch( (err) => {});
 
+    // LISTA DE TRAMITES EN LINEA
+    this.wsAPIEstadisticosGobService.listaTramitesRegistradosLinea('01/01/2019','31/12/2019')
+    .then( (response: wsAPIEstadiscitosGobListaDataInterface) =>{
 
-      this.wsAPIEstadisticosGobService.listaTramitesRegistradosLinea('01/01/2019','31/12/2019')
-      .then( (response: wsAPIEstadiscitosGobListaDataInterface) =>{
+        let labels = [];
+        let data= [];
+        response.rows.forEach( (item: wsAPIEstadiscitosGobListaRowInterface) => {
+          if (item.cantidad >= 4) {
+            
+            labels.push( item.nombreTramite );
+            data.push( item.cantidad );
 
-          let labels = [];
-          let data= [];
-          response.rows.forEach( (item: wsAPIEstadiscitosGobListaRowInterface) => {
-            if (item.cantidad >= 4) {
-              
-              labels.push( item.nombreTramite );
-              data.push( item.cantidad );
+          }
+        });
 
-            }
-          });
+        let pieChar = this.chartService.makePieChar(data,labels,response.total);
+        this.chartsActos.push(this.chartService.makeChartActo('En línea', tramitesDetailRefEnum.linea ,pieChar, { fecha1: '01/01/2019', fecha2: '31/12/2019' }));
 
-          let pieChar = this.chartService.makePieChar(data,labels,response.total);
-          this.chartsActos.push(this.chartService.makeChartActo('En línea',pieChar));
+        this.totalTramitesRealizados += response.total;
 
-      })
-      .catch( (err) => {
-      });
+    })
+    .catch( (err) => {
+    });
+  
+    // LISTA DE TRAMITES EN KIOSCOS
+    this.wsAPIEstadisticosGobService.listaTramitesRegistradosKioscos('01/01/2019','31/12/2019')
+    .then( (response: wsAPIEstadiscitosGobListaDataInterface) =>{
+
+        let labels = [];
+        let data= [];
+        response.rows.forEach( (item: wsAPIEstadiscitosGobListaRowInterface) => {
+          if (item.cantidad >= 4) {
+            
+            labels.push( item.nombreTramite );
+            data.push( item.cantidad );
+
+          }
+        });
+
+        let pieChar = this.chartService.makePieChar(data,labels,response.total);
+        this.chartsActos.push(this.chartService.makeChartActo('En kioscos', tramitesDetailRefEnum.kioscos,pieChar, { fecha1: '01/01/2019', fecha2: '31/12/2019' }));
+
+        this.totalTramitesRealizados += response.total;
+
+    })
+    .catch( (err) => {
+    });
+
+    // LISTA DE TRAMITES EN VENTANILLA
+    this.wsAPIEstadisticosGobService.listaTramitesRegistradosVentanilla('01/01/2019','31/12/2019')
+    .then( (response: wsAPIEstadiscitosGobListaDataInterface) =>{
+
+        let labels = [];
+        let data= [];
+        response.rows.forEach( (item: wsAPIEstadiscitosGobListaRowInterface) => {
+          if (item.cantidad >= 4) {
+            
+            labels.push( item.nombreTramite );
+            data.push( item.cantidad );
+
+          }
+        });
+
+        let pieChar = this.chartService.makePieChar(data,labels,response.total);
+        this.chartsActos.push(this.chartService.makeChartActo('En ventanilla', tramitesDetailRefEnum.ventanilla,pieChar, { fecha1: '01/01/2019', fecha2: '31/12/2019' }));
+
+        this.totalTramitesRealizados += response.total;
+
+    })
+    .catch( (err) => {
+    });
 
   }
 
   ngOnInit() {
     
-    // simulación de respuesta de graficos de pastel tramites y servicios   
-    // for (let i = 1; i <= 3; i++) {
-
-    //   let randomTramites = Math.trunc((Math.random() * 15) + 1);
-    //   let labels = [];
-    //   let data= [];
-    //   let total= 0;
-    //   for (let idx = 1; idx <= randomTramites; idx++) {
-    //     labels.push(`Trámite ${idx}`);
-
-    //     const cantidad = Math.trunc((Math.random() * 15) + 1);
-    //     data.push( cantidad );
-    //     total += cantidad;
-    //   }
-
-    //   this.totalTramitesRealizados += total;  
-    //   let pieChar = this.chartService.makePieChar(data,labels,total);
-    //   this.chartsActos.push(this.chartService.makeChartActo(i === 1 ? 'En línea' : i === 2 ? 'Kioscos' : 'Ventanilla',pieChar));
-    // }
-
     // simulación de respuesta de grafico de barras
     const data = [{ data: [65, 59, 80, 81]}];
     const labels = ['Colima', 'Villa de Álvarez', 'Manzanillo', 'Comala'];
@@ -118,7 +158,7 @@ export class PrincipalComponent implements OnInit {
   // ngAfterViewInit(){}
 
   // events
-  public maximizeCard(event, card) {
+  public maximizeCard(event, card, legendBtn) {
     let target = $(card);
     let _event = $(event.currentTarget);
 
@@ -128,18 +168,27 @@ export class PrincipalComponent implements OnInit {
       _event.addClass('fa-window-minimize');
       target.data('maximize', false);
 
+      $(legendBtn).removeClass('d-none');
+
     } else {
 
       target.removeClass('col-12').addClass('col-12 col-md-12 col-lg-4');
       _event.addClass('fa-window-maximize').removeClass('fa-window-minimize');
       target.data('maximize', true);
 
+      $(legendBtn).addClass('d-none');
+
     }
 
   }
 
-  public chartClicked( event, item ): void {
-    console.log(event,item);
+  public chartClicked( event, item, labelTramite): void {
+    console.log(event, item, labelTramite);
+    //debugger;
+  }
+
+  public chartHovered( event, item, labelTramite): void {
+    labelTramite.innerHTML = `<i class="fa fa-info-circle" aria-hidden="true"></i> Trámite <hr class='m-0 p-0'/><span>${item.graph.labels[event.active[0]._index]} [ <strong>${item.graph.data[event.active[0]._index]}</strong> trámites realizados.<span> ]` ;
   }  
 
 }

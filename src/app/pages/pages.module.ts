@@ -10,12 +10,14 @@ import localeEsMX from '@angular/common/locales/es-MX';
 
 // COMPONENTS
 import { PrincipalComponent } from './principal/principal.component';
+import { TramitesComponent } from './detalle/tramites/tramites.component';
 
 registerLocaleData(localeEsMX, 'es-MX');
 
 @NgModule({
   declarations: [
-    PrincipalComponent
+    PrincipalComponent,
+    TramitesComponent
   ],
   exports: [
     PrincipalComponent
