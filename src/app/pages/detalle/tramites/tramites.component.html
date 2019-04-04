@@ -1,3 +1,15 @@
-<p>
-  tramites works!
-</p>
+<div class="d-flex align-items-center justify-content-between">
+  <h4>Detalle de trámites en {{ tipoTramite }}</h4>
+  <a [routerLink]="['/principal']" [queryParams]="{}" class='btn btn-outline-primary'><i class="fa fa-pie-chart" aria-hidden="true"></i> Ir a vista general</a>  
+</div>
+<hr>
+<ul class="list-group list-group-flush">
+  <li *ngFor="let item of listaTramites" class="list-group-item">
+    <div class="d-flex align-items-center justify-content-between">
+      <div>
+        {{ item.nombreTramite }}
+      </div>
+      <h4><span class="badge badge-info">{{ item.cantidad }}</span></h4>
+    </div>
+  </li>
+</ul>

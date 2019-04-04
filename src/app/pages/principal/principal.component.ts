@@ -8,6 +8,10 @@ import { searchResultInterface } from 'src/app/interfaces/searchResult.interface
 import { pieCharInterface, pieChartsActoInterface, pieBarInterface } from 'src/app/interfaces/charts.interface';
 import { WorldclockapiService, ChartsService, WsAPIEstadisticosGobService } from 'src/app/services/service.index';
 import { wsAPIEstadiscitosGobListaDataInterface, wsAPIEstadiscitosGobListaRowInterface } from 'src/app/interfaces/wsAPIEstadiscitosGob.interface';
+import { frmBusquedaInterface } from 'src/app/interfaces/busqueda.interface';
+
+// MODELS
+import { frmBusquedaModel } from 'src/app/models/frmBusqueda.model';
 
 // ENUMERATORS
 import { tramitesDetailRefEnum } from 'src/app/enumerators/tramitesDetailRef.enum';
@@ -36,6 +40,8 @@ export class PrincipalComponent implements OnInit {
   public barCharOrigenSolicitudes: pieBarInterface = null; // objeto que contiene la información del gráfico de barras
   public searchResult: searchResultInterface = null; // objeto que contiene la información que se muestra como resultado de la busqueda general
 
+  public frmBusqueda: frmBusquedaInterface = null;
+
   constructor(
     private activatedRoute: ActivatedRoute,
     private router: Router,
@@ -44,11 +50,9 @@ export class PrincipalComponent implements OnInit {
     private wsAPIEstadisticosGobService: WsAPIEstadisticosGobService
   ) { 
 
-    this.activatedRoute.queryParams.subscribe( (params) => {
+    this.activatedRoute.queryParams.subscribe( (params) => {});
 
-      console.log(params);
-      
-    });
+    this.frmBusqueda = new frmBusquedaModel(null,null,null,null,null,null);
 
     this.wsWorldclockapiService.obtenerFechaUniverzal()
       .then( (response: string) => {
@@ -190,5 +194,12 @@ export class PrincipalComponent implements OnInit {
   public chartHovered( event, item, labelTramite): void {
     labelTramite.innerHTML = `<i class="fa fa-info-circle" aria-hidden="true"></i> Trámite <hr class='m-0 p-0'/><span>${item.graph.labels[event.active[0]._index]} [ <strong>${item.graph.data[event.active[0]._index]}</strong> trámites realizados.<span> ]` ;
   }  
+
+  public frmBusquedaOnSubmit(): void{
+    
+    console.log(this.frmBusqueda);
+
+    debugger;
+  }
 
 }

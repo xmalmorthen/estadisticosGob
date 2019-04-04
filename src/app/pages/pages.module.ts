@@ -1,6 +1,6 @@
 import { NgModule, LOCALE_ID } from '@angular/core';
 import { CommonModule, registerLocaleData } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { ChartsModule } from 'ng2-charts';
 import { RouterModule } from '@angular/router';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -26,6 +26,7 @@ registerLocaleData(localeEsMX, 'es-MX');
     CommonModule,
     RouterModule,
     FormsModule,
+    ReactiveFormsModule,
     NgbModule,
     ChartsModule,
   ], 

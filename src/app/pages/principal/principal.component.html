@@ -8,7 +8,7 @@
         <i class="fa fa-window-maximize fa-2x " style='cursor: pointer;top: 7px;position: absolute;right: 9px;' aria-hidden="true" (click)="isCollapsedSearchSeccion=true"></i>
       </div>
       <hr>
-      <form>
+      <form (ngSubmit)="frmBusquedaOnSubmit()" novalidate >
         <div class="form-row align-items-center">
           <div class="col-12 my-3">
             <label class="sr-only" for="findIput">Trámite o servicio</label>
@@ -16,7 +16,7 @@
               <div class="input-group-prepend">
                 <div class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></div>
               </div>
-              <input type="text" class="form-control" id="findInput" placeholder="Trámite o servicio">
+              <input type="text" class="form-control" id="inputTextTramiteServicio" name='inputTextTramiteServicio' #inputTextTramiteServicio [(ngModel)]="frmBusqueda.tramiteServicio" placeholder="Trámite o servicio">
             </div>
           </div>
           <div class="col-12 col-lg-4">
@@ -67,7 +67,7 @@
               <div class="input-group-prepend">
                 <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
               </div>
-              <input type="date" class="form-control" id="fomDateInput" placeholder="Trámite o servicio">
+              <input type="date" class="form-control" id="inputDateDesde" name="inputDateDesde" #inputDateDesde [(ngModel)]="frmBusqueda.desde" placeholder="Trámite o servicio">
             </div>
           </div>
           <div class="col-12 col-md-5">
@@ -76,7 +76,7 @@
                 <div class="input-group-prepend">
                   <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
                 </div>
-                <input type="date" class="form-control" id="fomDateInput" placeholder="Trámite o servicio">
+                <input type="date" class="form-control" id="inputDateHasta" name="inputDateHasta" #inputDateHasta [(ngModel)]="frmBusqueda.hasta" placeholder="Trámite o servicio">
               </div>
             </div>
           <div class="col-12 col-md-2 text-right">
@@ -147,7 +147,7 @@
                 <h5 class="m-0"> {{item.acto}} <span *ngIf="item.graph.total" class="badge badge-success mx-2" style='font-size: 1.5em;'> {{ item.graph.total }} </span></h5>
                 <div>
                     <a [routerLink]="['/detalle/tramites', item.detailRef]" [queryParams]="item.params" class='detailBtn'><i class="fa fa-th-list fa-2x" style='cursor: pointer;' aria-hidden="true"></i></a>
-                    <i #legendBtn class="fa fa-tag fa-2x legendBtn d-none" style='cursor: pointer;' aria-hidden="true" (click)="item.graph.legend=!item.graph.legend"></i>
+                    <i #legendBtn class="fa fa-tag fa-2x ml-3 legendBtn d-none" style='cursor: pointer;' aria-hidden="true" (click)="item.graph.legend=!item.graph.legend"></i>
                     <i class="fa fa-window-maximize fa-1x ml-3 maximizeBtn" style='cursor: pointer;' aria-hidden="true" (click)="maximizeCard($event, cardRef, legendBtn)"></i>
                 </div>
               </div>          
