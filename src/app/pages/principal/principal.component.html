@@ -8,79 +8,90 @@
         <i class="fa fa-window-maximize fa-2x " style='cursor: pointer;top: 7px;position: absolute;right: 9px;' aria-hidden="true" (click)="isCollapsedSearchSeccion=true"></i>
       </div>
       <hr>
-      <form (ngSubmit)="frmBusquedaOnSubmit()" novalidate >
-        <div class="form-row align-items-center">
-          <div class="col-12 my-3">
-            <label class="sr-only" for="findIput">Trámite o servicio</label>
+      <!-- <ngb-alert type="danger" *ngIf="this.frmBusqueda.invalid">Faltan datos para realizar la búsqueda.</ngb-alert> -->
+      <form [formGroup]='frmBusqueda' (ngSubmit)="formBusquedaOnSubmit()"  novalidate>
+        <div class="form-row align-items-center align-items-start">
+          <div class="col-12 align-self-start">
+            <label class="" for="findIput">Trámite o servicio</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
-                <div class="input-group-text"><i class="fa fa-search" aria-hidden="true"></i></div>
+                <div class="input-group-text"><i *ngIf="!modelBusqueda.searching" class="fa fa-search" aria-hidden="true"></i><i *ngIf="modelBusqueda.searching" class="fa fa-refresh fa-spin fa-fw"></i></div>
               </div>
-              <input type="text" class="form-control" id="inputTextTramiteServicio" name='inputTextTramiteServicio' #inputTextTramiteServicio [(ngModel)]="frmBusqueda.tramiteServicio" placeholder="Trámite o servicio">
+              <ng-template #rt let-r="result" let-t="term">                  
+                  <ngb-highlight [result]="r.nombre" [term]="t"></ngb-highlight>
+              </ng-template>
+              <input 
+                type="text" 
+                formControlName="inputTextTramiteServicio" 
+                id="inputTextTramiteServicio" 
+                name='inputTextTramiteServicio' 
+                class="form-control" 
+                ngModel
+                [ngbTypeahead]="search" 
+                [resultTemplate]="rt"
+                [inputFormatter]="formatter"
+                placeholder="Trámite o servicio"
+                minlength="4"
+                (blur)="validaData($event)" />              
             </div>
+            <div class="text-danger" *ngIf="modelBusqueda.inputTextTramiteServicioValid.length > 0" >{{ modelBusqueda.inputTextTramiteServicioValid }}</div>
           </div>
-          <div class="col-12 col-lg-4">
-            <label class="sr-only" for="fomDateInput">Dependencia</label>
+          <div class="col-12 col-lg-6 align-self-start" [ngClass]="{'d-none': getInputTextTramiteServicioValue.length > 0}">
+            <label class="" for="fomDateInput">Dependencia</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
                 <div class="input-group-text"><i class="fa fa-building" aria-hidden="true"></i></div>
               </div>
-              <select class="custom-select">
-                <option selected disabled>Seleccione una dependencia</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-              </select>
+              <select2 
+                formControlName="selectDependencia" 
+                id="selectDependencia" 
+                name="selectDependencia"
+                class="custom-select"
+                multiple="true"
+                [data]="listaDependencias | select2Paser"
+                placeholder="Seleccione una Dependencia">
+              </select2>
             </div>
           </div>
-          <div class="col-12 col-lg-4">
-            <label class="sr-only" for="fomDateInput">Kiosco</label>
+          <div class="col-12 col-lg-6 align-self-start" [ngClass]="{'d-none': getInputTextTramiteServicioValue.length > 0}">
+            <label class="" for="fomDateInput">Kiosco</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
                 <div class="input-group-text"><i class="fa fa-building" aria-hidden="true"></i></div>
               </div>
-              <select class="custom-select">
-                <option selected disabled>Seleccione un kiosco</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-              </select>
+              <select2 
+                formControlName="selectKiosco" 
+                id="selectKiosco" 
+                name="selectKiosco"
+                class="custom-select"
+                multiple="true"
+                [data]="listaKioscos | select2Paser"
+                [placeholder]="'Seleccione un Kiosco'">
+              </select2>
             </div>
-          </div>
-          <div class="col-12 col-lg-4">
-            <label class="sr-only" for="fomDateInput">Trámite</label>
-            <div class="input-group mb-2">
-              <div class="input-group-prepend">
-                <div class="input-group-text"><i class="fa fa-id-card-o" aria-hidden="true"></i></div>
-              </div>
-              <select class="custom-select">
-                <option selected disabled>Seleccione una trámite</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-12 col-md-5">
-            <label class="sr-only" for="fomDateInput">Desde</label>
+          </div>          
+          <div class="col-12 col-md-5 align-self-start">
+            <label class="" for="fomDateInput">Desde</label>
             <div class="input-group mb-2">
               <div class="input-group-prepend">
                 <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
               </div>
-              <input type="date" class="form-control" id="inputDateDesde" name="inputDateDesde" #inputDateDesde [(ngModel)]="frmBusqueda.desde" placeholder="Trámite o servicio">
+              <input formControlName="inputDateDesde" id="inputDateDesde" name='inputDateDesde' type="date" class="form-control" (blur)="validaDesdeDate($event)" [max]="getMaxDateDesde">
             </div>
+            <div class="text-danger" *ngIf="modelBusqueda.dateDesdeValid.length > 0" >{{ modelBusqueda.dateDesdeValid }}</div>
           </div>
-          <div class="col-12 col-md-5">
-              <label class="sr-only" for="fomDateInput">Hasta</label>
-              <div class="input-group mb-2">
-                <div class="input-group-prepend">
-                  <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
-                </div>
-                <input type="date" class="form-control" id="inputDateHasta" name="inputDateHasta" #inputDateHasta [(ngModel)]="frmBusqueda.hasta" placeholder="Trámite o servicio">
+          <div class="col-12 col-md-5 align-self-start">
+            <label class="" for="fomDateInput">Hasta</label>
+            <div class="input-group mb-2">
+              <div class="input-group-prepend">
+                <div class="input-group-text"><i class="fa fa-calendar" aria-hidden="true"></i></div>
               </div>
+              <input formControlName="inputDateHasta" id="inputDateHasta" name='inputDateHasta' type="date" class="form-control" [min]="getMinDateHasta" [max]="fechaActual | date: 'yyyy-MM-dd'" (blur)="validaHastaDate($event)">
             </div>
-          <div class="col-12 col-md-2 text-right">
-            <button type="submit" class="btn btn-outline-secondary btn-lg mb-2">Buscar</button>
+            <div class="text-danger" *ngIf="modelBusqueda.dateHastaValid.length > 0" >{{ modelBusqueda.dateHastaValid }}</div>
+          </div>
+          <div class="col-12 col-md-2 text-right align-self-center">
+            <button type="submit" class="btn btn-outline-secondary btn-lg ">Buscar</button>
           </div>
         </div>
       </form>

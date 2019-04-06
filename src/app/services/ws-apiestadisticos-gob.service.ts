@@ -3,7 +3,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
 // INTERFACES
-import { wsAPIEstadiscitosGobTotalesInterface, wsAPIEstadiscitosGobListaDataInterface, wsAPIEstadiscitosGobListaInterface } from '../interfaces/wsAPIEstadiscitosGob.interface';
+import { wsAPIEstadiscitosGobTotalesInterface, wsAPIEstadiscitosGobListaDataInterface, wsAPIEstadiscitosGobListaInterface, wsAPIEstadiscitosGobRowsDepKioInterface, wsAPIEstadiscitosGobStatusDataInterface } from '../interfaces/wsAPIEstadiscitosGob.interface';
+import { Observable } from 'rxjs';
 
 const ws = 'http://localhost:666/wsAPIEstadisticosGob/api/v1/';
 
@@ -17,6 +18,87 @@ export class WsAPIEstadisticosGobService {
   public ListaTramitesRegistradosVentanilla: wsAPIEstadiscitosGobListaDataInterface= null;
 
   constructor(private http: HttpClient) { }
+
+  // OBTENER DEPENDENCIAS
+  dependencias(id?: string, desc?: string): Promise<wsAPIEstadiscitosGobRowsDepKioInterface[]> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/dependencias';
+      if (id) {
+        wsRequest += '?id=' + id;
+      } else if (desc){
+        wsRequest += '?desc=' + desc;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobStatusDataInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobStatusDataInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobRowsDepKioInterface[]) => {
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER KIOSCOS
+  kioscos(id?: string, desc?: string): Promise<wsAPIEstadiscitosGobRowsDepKioInterface[]> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/kioscos';
+      if (id) {
+        wsRequest += '?id=' + id;
+      } else if (desc){
+        wsRequest += '?desc=' + desc;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobStatusDataInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobStatusDataInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobRowsDepKioInterface[]) => {
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER TRAMITES
+  tramitesObservable(id?: string, desc?: string): Observable<wsAPIEstadiscitosGobRowsDepKioInterface[]> {
+
+    let wsRequest = ws + 'query/tramites';
+    if (id) {
+      wsRequest += '?id=' + id;
+    } else if (desc){
+      wsRequest += '?desc=' + desc;
+    }
+
+    return this.http.get<wsAPIEstadiscitosGobStatusDataInterface>(wsRequest)
+      .pipe(
+        map( (response: wsAPIEstadiscitosGobStatusDataInterface) => {
+
+          return response.data;            
+          
+          // let arrayResult = [];
+          // response.data.forEach(item => {
+          //   arrayResult.push(item.nombre);
+          // });
+
+          // return arrayResult;
+          
+        })
+      );
+  }
 
   // OBTENER TOTAL DE TRAMITES REGISTRADOS EN LINEA
   totalTramitesRegistradosLinea(fecha1: string, fecha2: string): Promise<number> {

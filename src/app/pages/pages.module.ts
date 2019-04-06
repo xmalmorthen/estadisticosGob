@@ -3,7 +3,9 @@ import { CommonModule, registerLocaleData } from '@angular/common';
 import { FormsModule, ReactiveFormsModule  } from '@angular/forms';
 import { ChartsModule } from 'ng2-charts';
 import { RouterModule } from '@angular/router';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { Select2Module } from "ng-select2-component";
+import { PipesModule } from '../pipes/pipes.module';
 
 // LOCALES
 import localeEsMX from '@angular/common/locales/es-MX';
@@ -29,6 +31,8 @@ registerLocaleData(localeEsMX, 'es-MX');
     ReactiveFormsModule,
     NgbModule,
     ChartsModule,
+    Select2Module,
+    PipesModule
   ], 
   providers: [
     { provide: LOCALE_ID, useValue: 'es-MX' }
