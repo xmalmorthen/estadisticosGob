@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 // INTERFACES
 import { wsAPIEstadiscitosGobTotalesInterface, wsAPIEstadiscitosGobListaDataInterface, wsAPIEstadiscitosGobListaInterface, wsAPIEstadiscitosGobRowsDepKioInterface, wsAPIEstadiscitosGobStatusDataInterface } from '../interfaces/wsAPIEstadiscitosGob.interface';
-import { Observable } from 'rxjs';
 
 const ws = 'http://localhost:666/wsAPIEstadisticosGob/api/v1/';
 
@@ -181,7 +181,7 @@ export class WsAPIEstadisticosGobService {
     });
   }
 
-  // OBTENER TOTAL DE TRAMITES REGISTRADOS EN VENTANILLA
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN LINEA
   listaTramitesRegistradosLinea(fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
     return new Promise ( (resolve, reject) => {
 
@@ -214,7 +214,7 @@ export class WsAPIEstadisticosGobService {
     });
   }
 
-  // OBTENER TOTAL DE TRAMITES REGISTRADOS EN KIOSCOS
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN KIOSCOS
   listaTramitesRegistradosKioscos(fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
     return new Promise ( (resolve, reject) => {
 
@@ -247,7 +247,7 @@ export class WsAPIEstadisticosGobService {
     });
   }
 
-  // OBTENER TOTAL DE TRAMITES REGISTRADOS EN KIOSCOS
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN VENTANILLA
   listaTramitesRegistradosVentanilla(fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
     return new Promise ( (resolve, reject) => {
 
@@ -257,6 +257,262 @@ export class WsAPIEstadisticosGobService {
       let wsRequest = ws + 'query/listaTramitesRegistradosVentanilla';
       if (fecha1) {
         wsRequest += '?fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+
+              this.ListaTramitesRegistradosVentanilla = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN LINEA POR ID TRAMITE
+  listaTramitesRegistradosLineaPorIdTramite(idTramite: number, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosLineaPorIdTramite';
+
+      wsRequest += '?idTramite=' + idTramite;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+              
+              this.ListaTramitesRegistradosLinea = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN KIOSCOS POR ID TRAMITE
+  listaTramitesRegistradosKioscosPorIdTramite(idTramite: number, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosKioscosPorIdTramite';
+
+      wsRequest += '?idTramite=' + idTramite;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+
+              this.ListaTramitesRegistradosKioscos = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN VENTANILLA POR ID TRAMITE
+  listaTramitesRegistradosVentanillaPorIdTramite(idTramite: number, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosVentanillaPorIdTramite';
+
+      wsRequest += '?idTramite=' + idTramite;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+
+              this.ListaTramitesRegistradosVentanilla = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN LINEA POR DESCRIPCION
+  listaTramitesRegistradosLineaPorDescripcion(desc: string, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosLineaPorDescripcion';
+
+      wsRequest += '?desc=' + desc;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+              
+              this.ListaTramitesRegistradosLinea = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN KIOSCOS POR DESCRIPCION
+  listaTramitesRegistradosKioscosPorDescripcion(desc: string, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosKioscosPorDescripcion';
+
+      wsRequest += '?desc=' + desc;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+
+              this.ListaTramitesRegistradosKioscos = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN VENTANILLA POR DESCRIPCION
+  listaTramitesRegistradosVentanillaPorDescripcion(desc: string, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosVentanillaPorDescripcion';
+
+      wsRequest += '?desc=' + desc;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+
+              this.ListaTramitesRegistradosVentanilla = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN LINEA POR DESCRIPCION
+  listaTramitesRegistradosLineaPorDependencia(idDependencia: number, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosLineaPorDependencia';
+
+      wsRequest += '?idDependencia=' + idDependencia;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
+        if (fecha2)
+          wsRequest += '&fecha2=' + fecha2;
+      }
+
+      this.http.get<wsAPIEstadiscitosGobListaInterface>(wsRequest)
+          .pipe(
+            map( (response: wsAPIEstadiscitosGobListaInterface) => {
+              return response.data;
+            })
+          )
+          .subscribe( (response: wsAPIEstadiscitosGobListaDataInterface) => {
+              
+              this.ListaTramitesRegistradosLinea = response;
+
+              resolve( response );
+            },
+            (error: HttpErrorResponse) => {
+              reject(error);
+            }
+          );
+    });
+  }
+
+  // OBTENER LISTA DE TRAMITES REGISTRADOS EN VENTANILLA POR DESCRIPCION
+  listaTramitesRegistradosVentanillaPorDependencia(idDependencia: number, fecha1: string, fecha2: string): Promise<wsAPIEstadiscitosGobListaDataInterface> {
+    return new Promise ( (resolve, reject) => {
+
+      let wsRequest = ws + 'query/listaTramitesRegistradosVentanillaPorDependencia';
+
+      wsRequest += '?idDependencia=' + idDependencia;
+      if (fecha1) {
+        wsRequest += '&fecha1=' + fecha1;
         if (fecha2)
           wsRequest += '&fecha2=' + fecha2;
       }

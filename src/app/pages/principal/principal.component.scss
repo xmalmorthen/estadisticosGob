@@ -1,6 +1,12 @@
+
+
 /* MEDIA */
 @media only screen and (max-width: 992px) {
   .maximizeBtn, .legendBtn {
     display: none !important;
+  }
+
+  #chartjs-tooltip{
+    display: none;
   }
 }

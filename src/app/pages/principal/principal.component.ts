@@ -19,6 +19,7 @@ import { frmBusquedaModel } from 'src/app/models/frmBusqueda.model';
 import { tramitesDetailRefEnum } from 'src/app/enumerators/tramitesDetailRef.enum';
 import { isUndefined, isObject } from 'util';
 import { isString } from '@ng-bootstrap/ng-bootstrap/util/util';
+import { tramiteInterface, tramitesEncontradosInterface } from 'src/app/interfaces/tramite.interface';
 
 declare const $: any;
 
@@ -52,7 +53,9 @@ export class PrincipalComponent implements OnInit {
     searchFailed: false,
     dateHastaValid: '',
     dateDesdeValid: '',
-    inputTextTramiteServicioValid: ''
+    inputTextTramiteServicioValid: '',
+    frmError: false,
+    frmErrorMsg: ''
   };
 
   constructor(
@@ -152,7 +155,7 @@ export class PrincipalComponent implements OnInit {
             data.push( item.cantidad );
 
           }
-        });
+        });        
 
         let pieChar = this.chartService.makePieChar(data,labels,response.total);
         this.chartsActos.push(this.chartService.makeChartActo('En ventanilla', tramitesDetailRefEnum.ventanilla,pieChar, { fecha1: '01/01/2019', fecha2: '31/12/2019' }));
@@ -168,39 +171,24 @@ export class PrincipalComponent implements OnInit {
   ngOnInit() {
 
     this.frmBusqueda = new FormGroup({
-      inputTextTramiteServicio: new FormControl({ value:'' },[Validators.minLength(4)]),
-      selectDependencia: new FormControl(-1),
-      selectKiosco: new FormControl(-1),
-      inputDateDesde: new FormControl([]),
-      inputDateHasta: new FormControl([])
+      inputTextTramiteServicio: new FormControl('',[Validators.minLength(4), Validators.maxLength(100)]),
+      selectDependencia: new FormControl([]),
+      selectKiosco: new FormControl([]),
+      inputDateDesde: new FormControl(),
+      inputDateHasta: new FormControl()
     });   
 
     // simulación de respuesta de grafico de barras
     const data = [{ data: [65, 59, 80, 81]}];
     const labels = ['Colima', 'Villa de Álvarez', 'Manzanillo', 'Comala'];
-    this.barCharOrigenSolicitudes = this.chartService.makeBarChar(data,labels);
-
-    // simulación de respuesta de busqueda general
-    this.searchResult = {
-      general : {
-        palabra : 'acta'
-      },
-      registrosEncontrados : 5,
-      listaTramites : [
-        { id : 1, nombre : 'Trámite 1', realizados : { total : 10, linea : 5, ventanilla : 1, kiosco : 4 }, graph : this.chartService.makePieChar([5,1,4],['Línea','Kiosco','Ventanilla'],10) },
-        { id : 2, nombre : 'Trámite 2', realizados : { total : 20, linea : 5, ventanilla : 5, kiosco : 10 }, graph : this.chartService.makePieChar([5,5,10],['Línea','Kiosco','Ventanilla'],20) },
-        { id : 3, nombre : 'Trámite 3', realizados : { total : 5, linea : 3, ventanilla : 0, kiosco : 2 }, graph : this.chartService.makePieChar([3,2],['Línea','Ventanilla'],5) },
-        { id : 4, nombre : 'Trámite 4' },
-        { id : 5, nombre : 'Trámite 5' }
-      ]
-    };
+    this.barCharOrigenSolicitudes = this.chartService.makeBarChar(data,labels);    
 
   }
 
   // ngAfterViewInit(){}
 
   // events
-  public maximizeCard(event, card, legendBtn) {
+  public maximizeCard(event, card, legendBtn, graph) {
     let target = $(card);
     let _event = $(event.currentTarget);
 
@@ -219,19 +207,38 @@ export class PrincipalComponent implements OnInit {
       target.data('maximize', true);
 
       $(legendBtn).addClass('d-none');
+      graph.legend = false;
 
     }
 
   }
 
   public chartClicked( event, item, labelTramite): void {
-    console.log(event, item, labelTramite);
-    //debugger;
+    //console.log(event, item, labelTramite);
   }
 
+  private timesOutRefs= [];
   public chartHovered( event, item, labelTramite): void {
-    labelTramite.innerHTML = `<i class="fa fa-info-circle" aria-hidden="true"></i> Trámite <hr class='m-0 p-0'/><span>${item.graph.labels[event.active[0]._index]} [ <strong>${item.graph.data[event.active[0]._index]}</strong> trámites realizados.<span> ]` ;
-  }  
+    labelTramite.innerHTML = `<i class="fa fa-info-circle" aria-hidden="true"></i> Trámite <hr class='m-0 p-0'/><span>${item.graph.labels[event.active[0]._index]} [ <strong>${item.graph.data[event.active[0]._index]}</strong> trámites realizados.<span> ]`;
+    
+    $(labelTramite).removeClass('d-none');
+
+    const ref = this.timesOutRefs[ item.detailRef ];
+    if (ref) {
+
+      clearTimeout(this.timesOutRefs[ item.detailRef ]);
+      this.timesOutRefs[ item.detailRef ] = null;
+
+    }
+    
+    this.timesOutRefs[ item.detailRef ] = setTimeout(() => {
+
+      $(labelTramite).addClass('d-none');
+      this.timesOutRefs[ item.detailRef ] = null;
+
+    }, 10000);
+
+  }
 
   public frmBusquedaOnSubmit(): void{
     
@@ -266,7 +273,7 @@ export class PrincipalComponent implements OnInit {
   
   get getInputTextTramiteServicioValue() {
     const obj = this.frmBusqueda.get('inputTextTramiteServicio'); 
-    return typeof obj.value !== "undefined"  ? obj.value : '';
+    return typeof obj.value !== "undefined"  ? (isObject(obj.value) ? 'objeto' : obj.value) : '';
   }
 
   get getSelectDependenciaValue() {
@@ -317,31 +324,237 @@ export class PrincipalComponent implements OnInit {
 
   formBusquedaOnSubmit(): void{
     this.modelBusqueda.searching = false;
-
+    this.modelBusqueda.frmError = false;
+    this.modelBusqueda.frmErrorMsg = '';
+    
     const data = this.frmBusqueda.value;
 
-    console.log(data);
+    debugger;
 
-    if ( data.inputTextTramiteServicio.length == 0 && data.selectDependencia == -1 && data.selectKiosco == -1  ){
-      alert('required form');
+    if (!this.frmBusqueda.valid){
+      this.modelBusqueda.frmError = true;
+      this.modelBusqueda.frmErrorMsg = "Favor de completar la información";
       return null;
     }
 
+    if ( data.inputTextTramiteServicio.length == 0 && data.selectDependencia.length == 0 && data.selectKiosco.length == 0 ){
+      this.modelBusqueda.frmError = true;
+      this.modelBusqueda.frmErrorMsg = "Falta información";
+      return null;
+    }    
+
+    const fDesde = data.inputDateDesde ? moment(data.inputDateDesde).format('DD/MM/YYYY').toString() : null;
+    const fHasta = data.inputDateHasta ? moment(data.inputDateHasta).format('DD/MM/YYYY').toString() : null;
+
     // BUSQUEDA POR TRAMITE O SERVICIO
     if ( isObject(data.inputTextTramiteServicio)){
-      alert('object');
-      // TODO: Consultar tramites realizados por id [ data.inputTextTramiteServicio.id ]
-      //       verificar si se envían rangos de rechas
+      // BUSQUEDA POR ID DE TRAMITE
+      Promise.all([
+        this.wsAPIEstadisticosGobService.listaTramitesRegistradosLineaPorIdTramite(data.inputTextTramiteServicio.id, fDesde, fHasta),
+        this.wsAPIEstadisticosGobService.listaTramitesRegistradosKioscosPorIdTramite(data.inputTextTramiteServicio.id, fDesde, fHasta),
+        this.wsAPIEstadisticosGobService.listaTramitesRegistradosVentanillaPorIdTramite(data.inputTextTramiteServicio.id, fDesde, fHasta)
+      ])
+      .then( (values) =>{
+
+        let listaTramites: tramiteInterface[] = [];
+
+
+        for (let key in values) {          
+
+          if (values[key].total > 0) {
+
+            values[key].rows.forEach(row => {
+
+              let tramiteItem = listaTramites.find( qry => qry.id == Number(row.idTramite));
+              if (!tramiteItem){
+                
+                tramiteItem = {
+                  id: Number(row.idTramite),
+                  nombre: row.nombreTramite,
+                  realizados: { linea: 0, kiosco: 0, ventanilla: 0, total: 0 }
+                };
+
+                listaTramites.push(tramiteItem);
+
+              }
+              
+              switch (key) {
+                case '0':
+                  tramiteItem.realizados.linea += Number(row.cantidad);
+                break;
+                case '1':
+                  tramiteItem.realizados.kiosco += Number(row.cantidad);
+                break;
+                case '2':
+                  tramiteItem.realizados.ventanilla += Number(row.cantidad);
+                break;
+              }
+
+              tramiteItem.realizados.total += Number(row.cantidad);
+
+            });
+
+          }
+
+        };
+
+        let total = 0;
+        listaTramites.forEach(item => {
+          item.graph = this.chartService.makePieChar([ item.realizados.linea, item.realizados.kiosco, item.realizados.ventanilla],['Línea','Kiosco','Ventanilla'],item.realizados.total, { tooltips:{enabled: true} });
+          total += Number(item.realizados.total);
+        });
+        
+        this.searchResult = {
+          general: {
+            palabra: data.inputTextTramiteServicio.nombre
+          },
+          registrosEncontrados: total,
+          listaTramites: listaTramites
+        };
+
+      })
+      .catch ( err => {});
+      
     } else if (data.inputTextTramiteServicio.length > 0){
-      alert('string');
-      // TODO: Consultar tramites realizados por desc [ data.inputTextTramiteServicio.id ]
-      //       verificar si se envían rangos de rechas
+      // BUSQUEDA POR DESCRIPCION DE TRAMTE
+      Promise.all([
+        this.wsAPIEstadisticosGobService.listaTramitesRegistradosLineaPorDescripcion(data.inputTextTramiteServicio, fDesde , fHasta),
+        this.wsAPIEstadisticosGobService.listaTramitesRegistradosKioscosPorDescripcion(data.inputTextTramiteServicio, fDesde , fHasta),
+        this.wsAPIEstadisticosGobService.listaTramitesRegistradosVentanillaPorDescripcion(data.inputTextTramiteServicio, fDesde , fHasta)
+      ])
+      .then( (values) =>{
+
+        let listaTramites: tramiteInterface[] = [];
+
+
+        for (let key in values) {          
+
+          if (values[key].total > 0) {
+
+            values[key].rows.forEach(row => {
+
+              let tramiteItem = listaTramites.find( qry => qry.id == Number(row.idTramite));
+              if (!tramiteItem){
+                
+                tramiteItem = {
+                  id: Number(row.idTramite),
+                  nombre: row.nombreTramite,
+                  realizados: { linea: 0, kiosco: 0, ventanilla: 0, total: 0 }
+                };
+
+                listaTramites.push(tramiteItem);
+
+              }
+              
+              switch (key) {
+                case '0':
+                  tramiteItem.realizados.linea += Number(row.cantidad);
+                break;
+                case '1':
+                  tramiteItem.realizados.kiosco += Number(row.cantidad);
+                break;
+                case '2':
+                  tramiteItem.realizados.ventanilla += Number(row.cantidad);
+                break;
+              }
+
+              tramiteItem.realizados.total += Number(row.cantidad);
+
+            });
+
+          }
+
+        };
+
+        let total = 0;
+        listaTramites.forEach(item => {
+          item.graph = this.chartService.makePieChar([ item.realizados.linea, item.realizados.kiosco, item.realizados.ventanilla],['Línea','Kiosco','Ventanilla'],item.realizados.total, { tooltips:{enabled: true} });
+          total += Number(item.realizados.total);
+        });
+        
+        this.searchResult = {
+          general: {
+            palabra: data.inputTextTramiteServicio
+          },
+          registrosEncontrados: total,
+          listaTramites: listaTramites
+        };
+
+      })
+      .catch ( err => {});
+
     } else {
       if (data.selectDependencia !== -1) {
+
+        
+
+        let listaTramites: tramiteInterface[] = [];
+
         data.selectDependencia.forEach(id => {
-          // TODO: Consultar trámites realizados por id dependencia [ id ]  
-          //       verificar si se envían rangos de rechas
+          
+          Promise.all([
+            this.wsAPIEstadisticosGobService.listaTramitesRegistradosLineaPorDependencia(id, fDesde , fHasta),
+            this.wsAPIEstadisticosGobService.listaTramitesRegistradosVentanillaPorDependencia(id, fDesde , fHasta)
+          ])
+          .then( (values) =>{
+
+            for (let key in values) {          
+
+              if (values[key].total > 0) {
+
+                values[key].rows.forEach(row => {
+
+                  let tramiteItem = listaTramites.find( qry => qry.id == Number(row.idTramite));
+                  if (!tramiteItem){
+                    
+                    tramiteItem = {
+                      id: Number(row.idTramite),
+                      nombre: row.nombreTramite,
+                      realizados: { linea: 0, kiosco: 0, ventanilla: 0, total: 0 }
+                    };
+
+                    listaTramites.push(tramiteItem);
+
+                  }
+                  
+                  switch (key) {
+                    case '0':
+                      tramiteItem.realizados.linea += Number(row.cantidad);
+                    break;
+                    case '2':
+                      tramiteItem.realizados.ventanilla += Number(row.cantidad);
+                    break;
+                  }
+
+                  tramiteItem.realizados.total += Number(row.cantidad);
+
+                });
+
+              }
+
+            };
+
+            let total = 0;
+            listaTramites.forEach(item => {
+              item.graph = this.chartService.makePieChar([ item.realizados.linea, item.realizados.ventanilla],['Línea','Ventanilla'],item.realizados.total, { tooltips:{enabled: true} });
+              total += Number(item.realizados.total);
+            });
+            
+            this.searchResult = {
+              general: {
+                palabra: data.inputTextTramiteServicio
+              },
+              registrosEncontrados: total,
+              listaTramites: listaTramites
+            };
+
+            listaTramites = listaTramites.sort( ( a, b) => a.realizados > b.realizados ? -1 : a.realizados < b.realizados ? 1 :0);
+
+          })
+          .catch ( err => {});
+
         });
+
       }
 
       if (data.selectKiosco !== -1) {

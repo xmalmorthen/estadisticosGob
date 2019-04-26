@@ -3,6 +3,8 @@
   <a [routerLink]="['/principal']" [queryParams]="{}" class='btn btn-outline-primary'><i class="fa fa-pie-chart" aria-hidden="true"></i> Ir a vista general</a>  
 </div>
 <hr>
+<h4><strong>{{ totalTramites }}</strong> trámite(s) realizados en {{ tipoTramite }}</h4>
+<br>
 <ul class="list-group list-group-flush">
   <li *ngFor="let item of listaTramites" class="list-group-item">
     <div class="d-flex align-items-center justify-content-between">

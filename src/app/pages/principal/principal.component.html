@@ -8,7 +8,7 @@
         <i class="fa fa-window-maximize fa-2x " style='cursor: pointer;top: 7px;position: absolute;right: 9px;' aria-hidden="true" (click)="isCollapsedSearchSeccion=true"></i>
       </div>
       <hr>
-      <!-- <ngb-alert type="danger" *ngIf="this.frmBusqueda.invalid">Faltan datos para realizar la búsqueda.</ngb-alert> -->
+      <ngb-alert type="danger" *ngIf="modelBusqueda.frmError">{{ modelBusqueda.frmErrorMsg }}</ngb-alert>
       <form [formGroup]='frmBusqueda' (ngSubmit)="formBusquedaOnSubmit()"  novalidate>
         <div class="form-row align-items-center align-items-start">
           <div class="col-12 align-self-start">
@@ -25,9 +25,8 @@
                 formControlName="inputTextTramiteServicio" 
                 id="inputTextTramiteServicio" 
                 name='inputTextTramiteServicio' 
-                class="form-control" 
-                ngModel
-                [ngbTypeahead]="search" 
+                class="form-control"
+                [ngbTypeahead]="search"
                 [resultTemplate]="rt"
                 [inputFormatter]="formatter"
                 placeholder="Trámite o servicio"
@@ -98,7 +97,9 @@
       <!-- /SEARCH SECTION -->
       <!-- RESULTADO BUSQUEDA GENERAL -->
       <div class='m-3' *ngIf="searchResult">
-        <h5>Se buscó <span class="badge badge-info" style='font-size: 1.5em'> {{ searchResult.general.palabra }} </span>, se encontraron <span style='font-size: 1.5em;'><strong>{{ searchResult.registrosEncontrados }}</strong></span> trámites</h5>
+        <h5>Se buscó...</h5>
+        <h6 class="text-info" style='font-size: 1.5em'> {{ searchResult.general.palabra }} </h6>
+        <h5>se encontraron <span style='font-size: 1.5em;'><strong>{{ searchResult.registrosEncontrados }}</strong></span> trámites realizados</h5>
         <hr>
         <ngb-accordion #a="ngbAccordion" [closeOthers]="true" type="light">
           <ngb-panel *ngFor="let item of searchResult.listaTramites">
@@ -159,7 +160,7 @@
                 <div>
                     <a [routerLink]="['/detalle/tramites', item.detailRef]" [queryParams]="item.params" class='detailBtn'><i class="fa fa-th-list fa-2x" style='cursor: pointer;' aria-hidden="true"></i></a>
                     <i #legendBtn class="fa fa-tag fa-2x ml-3 legendBtn d-none" style='cursor: pointer;' aria-hidden="true" (click)="item.graph.legend=!item.graph.legend"></i>
-                    <i class="fa fa-window-maximize fa-1x ml-3 maximizeBtn" style='cursor: pointer;' aria-hidden="true" (click)="maximizeCard($event, cardRef, legendBtn)"></i>
+                    <i class="fa fa-window-maximize fa-1x ml-3 maximizeBtn" style='cursor: pointer;' aria-hidden="true" (click)="maximizeCard($event, cardRef, legendBtn, item.graph)"></i>
                 </div>
               </div>          
             </div>

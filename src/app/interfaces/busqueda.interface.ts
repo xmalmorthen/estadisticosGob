@@ -4,4 +4,6 @@ export interface busquedaInterface {
   dateHastaValid: string;
   dateDesdeValid: string;
   inputTextTramiteServicioValid: string;
+  frmError: boolean;
+  frmErrorMsg: string;
 }

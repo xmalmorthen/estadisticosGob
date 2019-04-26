@@ -48,10 +48,8 @@ export class TramitesComponent implements OnInit {
       this.getDataTipoTramite( this.tipoTramite, params.fecha1, params.fecha2)
       .then ( (response: wsAPIEstadiscitosGobListaDataInterface ) =>{
         
-        this.listaTramites = response.rows;
+        this.listaTramites = response.rows.sort( ( a, b) => a.cantidad > b.cantidad ? -1 : a.cantidad < b.cantidad ? 1 :0);
         this.totalTramites = response.total;
-
-        console.log(this.listaTramites, this.totalTramites)
 
       }).catch ( err => {});
 
